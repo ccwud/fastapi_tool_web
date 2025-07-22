@@ -32,10 +32,10 @@ export default defineConfig({
           proxy.on('proxyRes', (proxyRes, req) => {
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
-        },
-        // 不重写路径，保持 /api 前缀
-        // rewrite: (path) => path.replace(/^\/api/, '')
+        }
       }
-    }
+    },
+    // 添加CORS头
+    cors: true
   }
 })

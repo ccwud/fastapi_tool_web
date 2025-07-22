@@ -1,10 +1,35 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import ApiStatus from './components/ApiStatus.vue'
 
 const router = useRouter()
 const activeIndex = ref('/')
+const isApiCheckDisabled = ref(false)
+
+// 检查API状态检查是否被禁用
+const checkApiCheckStatus = () => {
+  isApiCheckDisabled.value = localStorage.getItem('api-check-disabled') === 'true'
+}
+
+// 重新启用API状态检查
+const enableApiCheck = () => {
+  localStorage.removeItem('api-check-disabled')
+  isApiCheckDisabled.value = false
+  // 刷新页面以重新加载API状态检查
+  window.location.reload()
+}
+
+// 监听存储变化
+window.addEventListener('storage', (event) => {
+  if (event.key === 'api-check-disabled') {
+    checkApiCheckStatus()
+  }
+})
+
+onMounted(() => {
+  checkApiCheckStatus()
+})
 
 const menuItems = [
   { index: '/', title: '工具首页', icon: 'House' },
@@ -63,6 +88,26 @@ const handleSelect = (key) => {
 
         <el-main class="main-content">
           <ApiStatus />
+          <div v-if="isApiCheckDisabled" class="api-check-disabled-notice">
+            <el-alert
+              title="API状态检查已禁用"
+              type="info"
+              :closable="false"
+              show-icon
+            >
+              <template #default>
+                <div class="alert-content">
+                  <p>您已禁用API状态检查功能。如需重新启用，请点击下方按钮。</p>
+                  <div class="alert-actions">
+                    <el-button size="small" type="primary" @click="enableApiCheck">
+                      <el-icon><Check /></el-icon>
+                      重新启用检查
+                    </el-button>
+                  </div>
+                </div>
+              </template>
+            </el-alert>
+          </div>
           <router-view />
         </el-main>
       </el-container>
@@ -155,5 +200,20 @@ const handleSelect = (key) => {
   background-color: #f0f2f5;
   height: calc(100vh - 60px);
   overflow-y: auto;
+}
+
+.api-check-disabled-notice {
+  margin-bottom: 16px;
+}
+
+.alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-actions {
+  display: flex;
+  gap: 8px;
 }
 </style>
