@@ -15,8 +15,8 @@ services:
     # 这里需要替换为你的后端服务镜像
     # image: your-backend-image:latest
     # 或者如果后端代码在同一个仓库中
-    # build: ./backend
-    image: placeholder-backend:latest
+    build: ../../fastapi_tool_project/
+#    image: placeholder-backend:latest
     ports:
       - "8000:8000"
     environment:
