@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 安装项目依赖
-RUN npm ci --only=production
+RUN npm ci
 
 # 复制项目文件
 COPY . .
