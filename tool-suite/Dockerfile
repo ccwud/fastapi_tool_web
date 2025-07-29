@@ -7,8 +7,10 @@ WORKDIR /app
 # 复制 package.json 和 package-lock.json
 COPY package*.json ./
 
-# 安装项目依赖
-RUN npm ci
+# 清理npm缓存并重新安装依赖
+RUN npm cache clean --force && \
+    rm -rf node_modules package-lock.json && \
+    npm install
 
 # 复制项目文件
 COPY . .

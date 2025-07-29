@@ -1,35 +1,50 @@
 version: '3.8'
 
 services:
-  frontend:
-    build: .
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    networks:
-      - tool-suite-network
-    restart: unless-stopped
-
-  backend:
-    # 这里需要替换为你的后端服务镜像
-    # image: your-backend-image:latest
-    # 或者如果后端代码在同一个仓库中
-    build: ../../fastapi_tool_project/
-#    image: placeholder-backend:latest
+  fastapi-tool-api:
+    image: cyangze/fastapi-tool-api:latest
     ports:
       - "8000:8000"
     environment:
-      - NODE_ENV=production
-      # 添加其他环境变量
-    networks:
-      - tool-suite-network
+      - PYTHONPATH=/app
+    volumes:
+      # 开发模式下可以挂载代码目录实现热重载
+      # - ./app:/app/app
+      - /app/__pycache__
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  frontend:
+    image: cyangze/tool-suite-frontend:latest
+    ports:
+      - "3000:80"
     restart: unless-stopped
 
-networks:
-  tool-suite-network:
-    driver: bridge
+  # 如果需要数据库，可以取消注释以下部分
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: fastapi_db
+  #     POSTGRES_USER: fastapi_user
+  #     POSTGRES_PASSWORD: fastapi_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
 
-# 如果需要持久化数据，可以添加 volumes
 # volumes:
-#   backend-data:
+#   postgres_data:
+
+networks:
+  default:
+    name: fastapi-tool-network
+
+# 构建并推送到Docker Hub的命令:
+# docker-compose build frontend
+# docker tag your-dockerhub-username/tool-suite-frontend cyangze/tool-suite-frontend:latest
+# docker push cyangze/tool-suite-frontend:latest

@@ -23,11 +23,11 @@ const getBaseURL = () => {
 
   // 生产环境优先使用环境变量中的配置
   if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL
+    return import.meta.env.VITE_API_BASE_URL+'/api'
   }
 
   // 否则使用生产环境默认配置
-  return API_CONFIG.PROD_BASE_URL
+  return API_CONFIG.PROD_BASE_URL+'/api'
 }
 
 // 创建axios实例
