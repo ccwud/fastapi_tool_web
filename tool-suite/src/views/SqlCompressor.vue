@@ -1,92 +1,76 @@
 <template>
   <div class="sql-container">
-    <el-card class="sql-card">
-      <template #header>
-        <div class="card-header">
-          <el-icon class="card-icon"><DataLine /></el-icon>
-          <span>SQL 压缩工具</span>
+    <div class="page-header">
+      <h1>SQL 压缩工具</h1>
+      <p>压缩和优化 SQL 语句，减少文件大小</p>
+    </div>
+    
+    <div class="sql-card">
+      <div class="content-grid">
+        <div class="input-section">
+          <div class="section-header">
+            <h3>SQL 输入</h3>
+            <div class="header-buttons">
+              <button class="sample-btn" @click="insertSampleSql">
+                示例 SQL
+              </button>
+              <button class="format-btn" @click="formatSql">
+                格式化
+              </button>
+            </div>
+          </div>
+          <textarea
+            v-model="inputSql"
+            placeholder="请输入要压缩的 SQL 语句..."
+            class="sql-textarea"
+          ></textarea>
+          <div class="sql-info">
+            <span>行数: {{ inputSql.split('\n').length }}</span>
+            <span>字符数: {{ inputSql.length }}</span>
+          </div>
         </div>
-      </template>
-      
-      <div class="sql-content">
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <div class="input-section">
-              <div class="section-header">
-                <h3>SQL 输入</h3>
-                <div class="header-buttons">
-                  <el-button size="small" @click="insertSampleSql">
-                    <el-icon><DocumentAdd /></el-icon>
-                    示例 SQL
-                  </el-button>
-                  <el-button size="small" @click="formatSql">
-                    <el-icon><MagicStick /></el-icon>
-                    格式化
-                  </el-button>
-                </div>
+        
+        <div class="output-section">
+          <div class="section-header">
+            <h3>压缩结果</h3>
+            <button class="copy-btn" @click="copyResult" :disabled="!outputSql">
+              复制
+            </button>
+          </div>
+          <textarea
+            v-model="outputSql"
+            readonly
+            placeholder="压缩后的 SQL 将显示在这里..."
+            class="sql-textarea output"
+          ></textarea>
+          <div class="result-info">
+            <div class="compression-stats" v-if="outputSql">
+              <div class="stat-item">
+                <span class="label">压缩后字符数:</span>
+                <span class="value">{{ outputSql.length }}</span>
               </div>
-              <el-input
-                v-model="inputSql"
-                type="textarea"
-                :rows="15"
-                placeholder="请输入要压缩的 SQL 语句..."
-                class="sql-textarea"
-              />
-              <div class="sql-info">
-                <span>行数: {{ inputSql.split('\n').length }}</span>
-                <span>字符数: {{ inputSql.length }}</span>
+              <div class="stat-item">
+                <span class="label">压缩率:</span>
+                <span class="value success">{{ compressionRatio }}%</span>
               </div>
-              <div class="button-group">
-                <el-button type="primary" @click="compressSql" :loading="loading">
-                  <el-icon><Compress /></el-icon>
-                  压缩 SQL
-                </el-button>
-                <el-button @click="clearText">
-                  <el-icon><Delete /></el-icon>
-                  清空
-                </el-button>
+              <div class="stat-item">
+                <span class="label">节省字符:</span>
+                <span class="value primary">{{ savedChars }}</span>
               </div>
             </div>
-          </el-col>
-          
-          <el-col :span="12">
-            <div class="output-section">
-              <div class="section-header">
-                <h3>压缩结果</h3>
-                <el-button size="small" @click="copyResult" :disabled="!outputSql">
-                  <el-icon><DocumentCopy /></el-icon>
-                  复制
-                </el-button>
-              </div>
-              <el-input
-                v-model="outputSql"
-                type="textarea"
-                :rows="15"
-                readonly
-                placeholder="压缩后的 SQL 将显示在这里..."
-                class="sql-textarea output"
-              />
-              <div class="result-info">
-                <div class="compression-stats" v-if="outputSql">
-                  <div class="stat-item">
-                    <span class="label">压缩后字符数:</span>
-                    <span class="value">{{ outputSql.length }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="label">压缩率:</span>
-                    <span class="value success">{{ compressionRatio }}%</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="label">节省字符:</span>
-                    <span class="value primary">{{ savedChars }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </div>
-    </el-card>
+      
+      <div class="button-group">
+        <button class="compress-btn" @click="compressSql" :disabled="loading">
+          {{ loading ? '压缩中...' : '压缩 SQL' }}
+        </button>
+        <button class="clear-btn" @click="clearText">
+          清空
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -193,42 +177,61 @@ const copyResult = async () => {
 .sql-container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.page-header p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
 }
 
 .sql-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 32px;
 }
 
-.card-header {
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+  align-items: stretch;
+}
+
+.input-section,
+.output-section {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.card-icon {
-  font-size: 20px;
-  color: #409eff;
-}
-
-.sql-content {
-  padding: 20px 0;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .section-header h3 {
-  margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: #000;
+  margin: 0;
 }
 
 .header-buttons {
@@ -236,40 +239,142 @@ const copyResult = async () => {
   gap: 8px;
 }
 
+.sample-btn,
+.format-btn {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sample-btn:hover,
+.format-btn:hover {
+  background: #6c757d;
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
 .sql-textarea {
-  margin-bottom: 12px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
+  min-height: 320px;
+  max-height: 500px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Courier New', Monaco, monospace;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  overflow-y: auto;
+}
+
+.sql-textarea:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 .sql-textarea.output {
-  background-color: #f5f7fa;
+  background-color: #f8f9fa;
+}
+
+.copy-btn {
+  background: transparent;
+  color: #28a745;
+  border: 2px solid #28a745;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.copy-btn:disabled {
+  background: transparent;
+  color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .sql-info {
   display: flex;
   gap: 16px;
-  margin-bottom: 16px;
-  color: #909399;
-  font-size: 12px;
+  color: #666;
+  font-size: 14px;
 }
 
 .button-group {
   display: flex;
   gap: 12px;
+  justify-content: center;
+}
+
+.compress-btn {
+  background: transparent;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compress-btn:hover {
+  background: #007bff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.compress-btn:disabled {
+  background: transparent;
+  color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.clear-btn {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: #6c757d;
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .result-info {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .compression-stats {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 12px;
+  padding: 16px;
   background-color: #f0f9ff;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #b3d8ff;
 }
 
@@ -280,25 +385,35 @@ const copyResult = async () => {
 }
 
 .label {
-  color: #606266;
-  font-size: 12px;
+  color: #666;
+  font-size: 14px;
 }
 
 .value {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .value.success {
-  color: #67c23a;
+  color: #28a745;
 }
 
 .value.primary {
-  color: #409eff;
+  color: #007bff;
 }
 
-.output-section {
-  border-left: 1px solid #e4e7ed;
-  padding-left: 24px;
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .sql-card {
+    padding: 20px;
+  }
+  
+  .sql-textarea {
+    min-height: 200px;
+  }
 }
 </style>

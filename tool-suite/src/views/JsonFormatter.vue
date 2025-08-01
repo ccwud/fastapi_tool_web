@@ -1,115 +1,93 @@
 <template>
   <div class="json-container">
-    <el-card class="json-card">
-      <template #header>
-        <div class="card-header">
-          <el-icon class="card-icon"><DocumentCopy /></el-icon>
-          <span>JSON 格式化工具</span>
-          <el-button type="primary" size="small" class="functions-btn">
-            JSON Functions
-          </el-button>
-        </div>
-      </template>
+    <div class="page-header">
+      <h1>JSON 格式化工具</h1>
+      <p>JSON格式化、压缩、转义和验证工具</p>
+    </div>
+    
+    <div class="json-card">
+      <div class="operation-tabs">
+        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+          <el-tab-pane label="格式化" name="format">
+            <div class="format-controls">
+              <el-radio-group v-model="formatType" size="small">
+                <el-radio-button label="pretty">美化格式</el-radio-button>
+                <el-radio-button label="minify">压缩格式</el-radio-button>
+              </el-radio-group>
+              <el-input-number
+                v-model="indentSize"
+                :min="2"
+                :max="8"
+                size="small"
+                controls-position="right"
+                style="width: 100px; margin-left: 16px;"
+              />
+              <span style="margin-left: 8px; color: #606266;">缩进空格</span>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="转义" name="escape">
+            <div class="escape-controls">
+              <el-radio-group v-model="escapeType" size="small">
+                <el-radio-button label="escape">转义</el-radio-button>
+                <el-radio-button label="unescape">反转义</el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
       
-      <div class="json-content">
-        <div class="operation-tabs">
-          <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-            <el-tab-pane label="格式化" name="format">
-              <div class="format-controls">
-                <el-radio-group v-model="formatType" size="small">
-                  <el-radio-button label="pretty">美化格式</el-radio-button>
-                  <el-radio-button label="minify">压缩格式</el-radio-button>
-                </el-radio-group>
-                <el-input-number
-                  v-model="indentSize"
-                  :min="2"
-                  :max="8"
-                  size="small"
-                  controls-position="right"
-                  style="width: 100px; margin-left: 16px;"
-                />
-                <span style="margin-left: 8px; color: #606266;">缩进空格</span>
+      <div class="content-grid">
+        <div class="input-section">
+          <div class="section-header">
+            <h3>JSON 输入</h3>
+            <div class="header-buttons">
+                <button @click="insertSampleJson" class="sample-btn">
+                  插入示例
+                </button>
               </div>
-            </el-tab-pane>
-            <el-tab-pane label="转义" name="escape">
-              <div class="escape-controls">
-                <el-radio-group v-model="escapeType" size="small">
-                  <el-radio-button label="escape">转义</el-radio-button>
-                  <el-radio-button label="unescape">反转义</el-radio-button>
-                </el-radio-group>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
+            </div>
+            <textarea
+              v-model="inputJson"
+              placeholder="请输入 JSON 数据..."
+              class="json-textarea"
+            ></textarea>
+          </div>
+          
+          <div class="output-section">
+            <div class="section-header">
+              <h3>处理结果</h3>
+              <button @click="copyResult" :disabled="!outputJson" class="copy-btn">
+                一键复制
+              </button>
+            </div>
+            <textarea
+              v-model="outputJson"
+              readonly
+              placeholder="处理结果将显示在这里..."
+              class="json-textarea output"
+            ></textarea>
+            <div class="result-info">
+              <span v-if="outputJson">
+                字符数: {{ outputJson.length }}
+              </span>
+              <span v-if="jsonStats.keys" class="stats">
+                | 键数: {{ jsonStats.keys }} | 层级: {{ jsonStats.depth }}
+              </span>
+            </div>
+          </div>
         </div>
         
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <div class="input-section">
-              <div class="section-header">
-                <h3>JSON 输入</h3>
-                <div class="header-buttons">
-                  <el-button size="small" @click="insertSampleJson">
-                    <el-icon><DocumentAdd /></el-icon>
-                    示例数据
-                  </el-button>
-                  <el-button size="small" @click="validateJson">
-                    <el-icon><CircleCheck /></el-icon>
-                    验证
-                  </el-button>
-                </div>
-              </div>
-              <el-input
-                v-model="inputJson"
-                type="textarea"
-                :rows="15"
-                placeholder="请输入 JSON 数据..."
-                class="json-textarea"
-              />
-              <div class="button-group">
-                <el-button type="primary" @click="processJson">
-                  <el-icon><Promotion /></el-icon>
-                  {{ getProcessButtonText() }}
-                </el-button>
-                <el-button @click="clearText">
-                  <el-icon><Delete /></el-icon>
-                  清空
-                </el-button>
-              </div>
-            </div>
-          </el-col>
-          
-          <el-col :span="12">
-            <div class="output-section">
-              <div class="section-header">
-                <h3>处理结果</h3>
-                <el-button size="small" @click="copyResult" :disabled="!outputJson">
-                  <el-icon><DocumentCopy /></el-icon>
-                  复制
-                </el-button>
-              </div>
-              <el-input
-                v-model="outputJson"
-                type="textarea"
-                :rows="15"
-                readonly
-                placeholder="处理结果将显示在这里..."
-                class="json-textarea output"
-              />
-              <div class="result-info">
-                <span v-if="outputJson">
-                  字符数: {{ outputJson.length }}
-                </span>
-                <span v-if="jsonStats.keys" class="stats">
-                  | 键数: {{ jsonStats.keys }} | 层级: {{ jsonStats.depth }}
-                </span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+        <div class="button-group">
+          <button @click="processJson" class="process-btn">
+            {{ getProcessButtonText() }}
+          </button>
+          <button @click="clearText" class="clear-btn">
+            清空
+          </button>
+        </div>
       </div>
-    </el-card>
-  </div>
-</template>
+    </div>
+  </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
@@ -270,36 +248,37 @@ const handleTabClick = () => {
 .json-container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.page-header p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
 }
 
 .json-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.card-icon {
-  font-size: 20px;
-  color: #409eff;
-}
-
-.functions-btn {
-  margin-left: auto;
-}
-
-.json-content {
-  padding: 20px 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 32px;
 }
 
 .operation-tabs {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .format-controls,
@@ -309,18 +288,32 @@ const handleTabClick = () => {
   padding: 16px 0;
 }
 
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+  align-items: stretch;
+}
+
+.input-section,
+.output-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .section-header h3 {
-  margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: #303133;
+  color: #000;
+  margin: 0;
 }
 
 .header-buttons {
@@ -328,34 +321,136 @@ const handleTabClick = () => {
   gap: 8px;
 }
 
+.sample-btn {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sample-btn:hover {
+  background: #6c757d;
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
 .json-textarea {
-  margin-bottom: 16px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
+  min-height: 320px;
+  max-height: 500px;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Courier New', Monaco, monospace;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  overflow-y: auto;
+}
+
+.json-textarea:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 .json-textarea.output {
-  background-color: #f5f7fa;
+  background-color: #f8f9fa;
+}
+
+.copy-btn {
+  background: transparent;
+  color: #28a745;
+  border: 2px solid #28a745;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.copy-btn:disabled {
+  background: transparent;
+  color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .button-group {
   display: flex;
   gap: 12px;
+  justify-content: center;
+}
+
+.process-btn {
+  background: transparent;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.process-btn:hover {
+  background: #007bff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.clear-btn {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: #6c757d;
+  color: white;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .result-info {
   display: flex;
   justify-content: space-between;
-  color: #909399;
-  font-size: 12px;
+  color: #666;
+  font-size: 14px;
 }
 
 .stats {
-  color: #409eff;
+  color: #007bff;
 }
 
-.output-section {
-  border-left: 1px solid #e4e7ed;
-  padding-left: 24px;
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .json-card {
+    padding: 20px;
+  }
+  
+  .json-textarea {
+    min-height: 200px;
+  }
 }
 </style>

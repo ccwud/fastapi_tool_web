@@ -5,6 +5,7 @@ import DesEncryption from '../views/DesEncryption.vue'
 import MarkdownConverter from '../views/MarkdownConverter.vue'
 import JsonFormatter from '../views/JsonFormatter.vue'
 import SqlCompressor from '../views/SqlCompressor.vue'
+import JavaToJson from '../views/JavaToJson.vue'
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
     path: '/sql-compressor',
     name: 'SqlCompressor',
     component: SqlCompressor
+  },
+  {
+    path: '/java-to-json',
+    name: 'JavaToJson',
+    component: JavaToJson
   }
 ]
 

@@ -113,17 +113,57 @@ onMounted(() => {
 
 <style scoped>
 .api-status {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .alert-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+}
+
+.alert-content p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #856404;
 }
 
 .alert-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+:deep(.el-alert) {
+  border-radius: 12px;
+  border: 1px solid #ffeaa7;
+  background-color: #fffbf0;
+  padding: 20px;
+}
+
+:deep(.el-alert--warning) {
+  background-color: #fffbf0;
+  border-color: #ffeaa7;
+}
+
+:deep(.el-alert__title) {
+  color: #856404;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+:deep(.el-alert__icon) {
+  color: #f39c12;
+}
+
+:deep(.el-alert__content) {
+  color: #856404;
+}
+
+:deep(.el-button--small) {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 8px 16px;
 }
 </style>
