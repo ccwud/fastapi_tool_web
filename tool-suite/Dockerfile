@@ -15,7 +15,7 @@ RUN npm cache clean --force && \
 # 复制项目文件
 COPY . .
 
-# 构建应用
+# 构建应用（使用默认配置，前端通过宿主机端口访问后端）
 RUN npm run build
 
 # 生产阶段

@@ -52,8 +52,9 @@ const checkConnection = async () => {
   
   try {
     const baseURL = getBaseURL()
-    // 使用原来的API检查端点
-    const response = await fetch(`${baseURL}/v1/text/ok`, {
+    // 统一使用相对路径通过nginx代理访问
+    const apiUrl = `${baseURL}/v1/text/ok`
+    const response = await fetch(apiUrl, {
       method: 'GET',
       mode: 'cors'
     })

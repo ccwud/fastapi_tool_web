@@ -18,11 +18,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - fastapi-tool-network
   frontend:
     image: cyangze/tool-suite-frontend:latest
     ports:
       - "3000:80"
     restart: unless-stopped
+    depends_on:
+      - fastapi-tool-api
+    networks:
+      - fastapi-tool-network
 
   # 如果需要数据库，可以取消注释以下部分
   # postgres:
@@ -41,8 +47,8 @@ services:
 #   postgres_data:
 
 networks:
-  default:
-    name: fastapi-tool-network
+  fastapi-tool-network:
+    driver: bridge
 
 # 构建并推送到Docker Hub的命令:
 # docker-compose build frontend
