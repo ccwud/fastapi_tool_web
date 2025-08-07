@@ -23,7 +23,7 @@ services:
   frontend:
     image: cyangze/tool-suite-frontend:latest
     ports:
-      - "3000:80"
+      - "3001:80"
     restart: unless-stopped
     depends_on:
       - fastapi-tool-api
