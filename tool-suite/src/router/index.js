@@ -6,6 +6,7 @@ import MarkdownConverter from '../views/MarkdownConverter.vue'
 import JsonFormatter from '../views/JsonFormatter.vue'
 import SqlCompressor from '../views/SqlCompressor.vue'
 import JavaToJson from '../views/JavaToJson.vue'
+import UnicodeConverter from '../views/UnicodeConverter.vue'
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
     path: '/java-to-json',
     name: 'JavaToJson',
     component: JavaToJson
+  },
+  {
+    path: '/unicode-converter',
+    name: 'UnicodeConverter',
+    component: UnicodeConverter
   }
 ]
 

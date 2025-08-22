@@ -50,6 +50,20 @@
         </div>
       </div>
 
+      <!-- Unicode转换 -->
+      <div class="tool-card" @click="$router.push('/unicode-converter')">
+        <div class="card-icon">
+          <el-icon><Key /></el-icon>
+        </div>
+        <h3 class="card-title">Unicode转换</h3>
+        <p class="card-description">字符串与Unicode编码相互转换</p>
+        <div class="card-action">
+          <el-button type="primary" class="action-btn">
+            开始转换
+          </el-button>
+        </div>
+      </div>
+
       <!-- HTML转Markdown -->
       <div class="tool-card" @click="$router.push('/markdown-converter')">
         <div class="card-icon">

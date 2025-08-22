@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import ApiStatus from './components/ApiStatus.vue'
+import AppLogo from './components/AppLogo.vue'
+import AppNavigation from './components/AppNavigation.vue'
+import UserActions from './components/UserActions.vue'
 
-const router = useRouter()
-const activeIndex = ref('/')
 const isApiCheckDisabled = ref(false)
 const showSupportDialog = ref(false)
 
@@ -30,64 +30,34 @@ window.addEventListener('storage', (event) => {
   }
 })
 
+// 处理支持按钮点击
+const handleSupportClick = () => {
+  showSupportDialog.value = true
+}
+
+// 处理Logo点击
+const handleLogoClick = () => {
+  // 可以添加Logo点击的统计或其他逻辑
+}
+
 onMounted(() => {
   checkApiCheckStatus()
 })
-
-const menuItems = [
-  { index: '/', title: '工具首页', icon: 'House' },
-  { index: '/chinese-converter', title: '简繁体转换', icon: 'Document' },
-  { index: '/translator', title: '中英文翻译', icon: 'ChatDotRound' },
-  { index: '/des-encryption', title: 'DES加解密', icon: 'Lock' },
-  { index: '/markdown-converter', title: 'HTML转Markdown', icon: 'Document' },
-  { index: '/json-formatter', title: 'JSON格式化', icon: 'DocumentCopy' },
-  { index: '/sql-compressor', title: 'SQL压缩', icon: 'DataLine' },
-  { index: '/java-to-json', title: 'Java转JSON', icon: 'DocumentCopy' }
-]
-
-const handleSelect = (key) => {
-  activeIndex.value = key
-  router.push(key)
-}
-
-// 显示支持我们的收款码图片
-const openSupportUrl = () => {
-  showSupportDialog.value = true
-}
 </script>
 
 <template>
   <div class="app-container">
-    <!-- 顶部导航栏 -->
-    <header class="header">
-      <div class="header-content">
-        <div class="logo">
-          <h1>工具集合</h1>
-        </div>
-        <nav class="nav-menu">
-          <el-menu
-            :default-active="activeIndex"
-            mode="horizontal"
-            @select="handleSelect"
-            class="top-menu"
-          >
-            <el-menu-item
-              v-for="item in menuItems"
-              :key="item.index"
-              :index="item.index"
-              class="nav-item"
-            >
-              <el-icon><component :is="item.icon" /></el-icon>
-              <span>{{ item.title }}</span>
-            </el-menu-item>
-          </el-menu>
-        </nav>
-        <div class="user-info">
-          <button @click="openSupportUrl" class="support-btn">
-            <el-icon><Coffee /></el-icon>
-            <span>Support Us</span>
-          </button>
-        </div>
+    <!-- 现代化顶部导航栏 -->
+    <header class="app-header">
+      <div class="header-content container flex-between">
+        <!-- Logo区域 -->
+        <AppLogo @logo-click="handleLogoClick" />
+        
+        <!-- 导航菜单 -->
+        <AppNavigation />
+        
+        <!-- 用户操作区域 -->
+        <UserActions @support-click="handleSupportClick" />
       </div>
     </header>
 
@@ -151,179 +121,127 @@ html, body {
 </style>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* 应用容器 */
 .app-container {
   min-height: 100vh;
-  height: auto;
-  background-color: #F7F8FA;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  color: #333333;
-  overflow-x: hidden;
-  overflow-y: auto;
+  background-color: var(--bg-secondary);
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
-/* 顶部导航栏样式 */
-.header {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e8e8e8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+/* 现代化顶部导航栏 */
+.app-header {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .header-content {
+  height: 72px;
+  padding: 0;
+}
+
+/* 主要内容区域 */
+.main-content {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  min-height: calc(100vh - 72px);
+}
+
+.content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+/* API检查禁用通知 */
+.api-check-disabled-notice {
+  margin-bottom: var(--space-lg);
+}
+
+.alert-content {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  height: 64px;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-.logo h1 {
-  margin: 0;
-  color: #333333;
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-}
-
-.nav-menu {
-  flex: 1;
+.alert-actions {
   display: flex;
-  justify-content: center;
-}
-
-.top-menu {
-  border-bottom: none;
-  background-color: transparent;
-}
-
-.nav-item {
-  margin: 0 8px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  color: #666666;
-  font-weight: 500;
-}
-
-.nav-item:hover {
-  background-color: #f5f5f5;
-  color: #1890ff;
-}
-
-.nav-item.is-active {
-  background-color: #e6f7ff;
-  color: #1890ff;
-  border-bottom: none;
-}
-
-.nav-item .el-icon {
-  margin-right: 6px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-}
-
-.support-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #007BFF;
-  font-weight: 500;
-  padding: 10px 20px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 20px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.support-btn:hover {
-  background-color: #007BFF;
-  color: white;
-  border-color: #007BFF;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-}
-
-.support-btn .el-icon {
-  font-size: 16px;
+  gap: var(--space-sm);
 }
 
 /* 支持我们弹窗样式 */
 .support-dialog-content {
   text-align: center;
-  padding: 20px;
+  padding: var(--space-lg);
 }
 
 .support-qr-image {
   width: 100%;
   max-width: 300px;
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: var(--space-md);
 }
 
 .support-text {
-  font-size: 16px;
-  color: #666;
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
   margin: 0;
-  font-weight: 500;
-}
-
-/* 主要内容区域样式 */
-.main-content {
-  min-height: calc(100vh - 64px);
-  height: auto;
-  background-color: #F7F8FA;
-  overflow-y: visible;
-}
-
-.content-wrapper {
-  max-width: 95%;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-
-.api-check-disabled-notice {
-  margin-bottom: 24px;
-}
-
-.alert-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.alert-actions {
-  display: flex;
-  gap: 8px;
+  font-weight: var(--font-weight-medium);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .header-content {
-    padding: 0 16px;
-  }
-  
-  .nav-menu {
-    display: none;
+    height: 64px;
+    padding: 0 var(--space-md);
   }
   
   .content-wrapper {
-    padding: 24px 16px;
+    padding: var(--space-lg) var(--space-md);
+  }
+  
+  .main-content {
+    min-height: calc(100vh - 64px);
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: var(--space-md);
+  }
+  
+  .support-dialog-content {
+    padding: var(--space-md);
+  }
+}
+
+/* 动画增强 */
+.app-header {
+  transition: var(--transition-fast);
+}
+
+.content-wrapper {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
