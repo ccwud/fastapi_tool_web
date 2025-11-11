@@ -3,6 +3,7 @@ import ChineseConverter from '../views/ChineseConverter.vue'
 import Translator from '../views/Translator.vue'
 import DesEncryption from '../views/DesEncryption.vue'
 import MarkdownConverter from '../views/MarkdownConverter.vue'
+import ApiDocsToMarkdown from '../views/ApiDocsToMarkdown.vue'
 import JsonFormatter from '../views/JsonFormatter.vue'
 import SqlCompressor from '../views/SqlCompressor.vue'
 import JavaToJson from '../views/JavaToJson.vue'
@@ -33,6 +34,11 @@ const routes = [
     path: '/markdown-converter',
     name: 'MarkdownConverter',
     component: MarkdownConverter
+  },
+  {
+    path: '/api-docs-to-markdown',
+    name: 'ApiDocsToMarkdown',
+    component: ApiDocsToMarkdown
   },
   {
     path: '/json-formatter',

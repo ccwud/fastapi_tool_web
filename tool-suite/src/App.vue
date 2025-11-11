@@ -4,6 +4,7 @@ import ApiStatus from './components/ApiStatus.vue'
 import AppLogo from './components/AppLogo.vue'
 import AppNavigation from './components/AppNavigation.vue'
 import UserActions from './components/UserActions.vue'
+import SupportFloating from './components/SupportFloating.vue'
 
 const isApiCheckDisabled = ref(false)
 const showSupportDialog = ref(false)
@@ -50,16 +51,19 @@ onMounted(() => {
     <!-- 现代化顶部导航栏 -->
     <header class="app-header">
       <div class="header-content container flex-between">
-        <!-- Logo区域 -->
+        <!-- Logo区域（保持最左侧） -->
         <AppLogo @logo-click="handleLogoClick" />
         
-        <!-- 导航菜单 -->
+        <!-- 导航菜单（紧随 Logo 之后，从左侧开始） -->
         <AppNavigation />
         
-        <!-- 用户操作区域 -->
-        <UserActions @support-click="handleSupportClick" />
+        <!-- 用户操作区域（改为悬浮按钮，头部暂不展示） -->
+        <UserActions v-if="false" @support-click="handleSupportClick" />
       </div>
     </header>
+
+    <!-- 悬浮支持按钮：放在导航栏下方右上角，不影响布局 -->
+    <SupportFloating @support-click="handleSupportClick" />
 
     <!-- 主要内容区域 -->
     <main class="main-content">
@@ -146,6 +150,26 @@ html, body {
 .header-content {
   height: 72px;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* 让头部容器更贴近左右边界，释放中间空间 */
+.app-header :deep(.header-content.container) {
+  max-width: none; /* 取消居中，使用全宽 */
+  margin: 0; /* 去除左右自动边距 */
+  padding-left: 100px; /* 左侧保留 100px 距离 */
+  padding-right: var(--space-sm); /* 保留右侧适度内边距 */
+}
+
+/* 确保导航可收缩、右侧操作区不被挤压 */
+.app-header :deep(.app-navigation) {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 /* 主要内容区域 */
@@ -204,6 +228,10 @@ html, body {
   .header-content {
     height: 64px;
     padding: 0 var(--space-md);
+  }
+  /* 移动端适配：减少左侧间距，避免过度留白 */
+  .app-header :deep(.header-content.container) {
+    padding-left: var(--space-md);
   }
   
   .content-wrapper {

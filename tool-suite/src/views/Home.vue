@@ -1,10 +1,10 @@
 <template>
   <div class="home-container">
     <!-- 页面标题 -->
-    <div class="page-header">
-      <h2>工具集合</h2>
-      <p>选择您需要的工具，快速完成各种文本处理任务</p>
-    </div>
+  <div class="page-header">
+    <h2>工具集合</h2>
+    <p>选择您需要的工具，快速完成各种文本处理任务</p>
+  </div>
 
     <!-- 工具卡片网格 -->
     <div class="tools-grid">
@@ -119,12 +119,27 @@
           </el-button>
         </div>
       </div>
+
+      <!-- hoppscotch转markdown -->
+      <div class="tool-card" @click="$router.push('/api-docs-to-markdown')">
+        <div class="card-icon">
+          <el-icon><Document /></el-icon>
+        </div>
+        <h3 class="card-title">hoppscotch转markdown</h3>
+        <p class="card-description">将 Hoppscotch JSON 文档转换为 Markdown</p>
+        <div class="card-action">
+          <el-button type="primary" class="action-btn">
+            开始转换
+          </el-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import UiButton from '@/components/ui/button.vue'
 
 const router = useRouter()
 </script>

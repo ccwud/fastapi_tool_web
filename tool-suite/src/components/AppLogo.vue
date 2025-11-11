@@ -39,6 +39,7 @@ const handleLogoClick = () => {
   color: inherit;
   transition: var(--transition-fast);
   padding: var(--space-xs);
+  padding-left: 0; /* 贴左 */
   border-radius: var(--radius-lg);
 }
 

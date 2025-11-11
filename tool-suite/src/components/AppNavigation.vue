@@ -38,7 +38,9 @@
     </div>
 
     <!-- 移动端汉堡菜单按钮 -->
+    <!-- 暂时隐藏移动菜单按钮，避免占位与遮挡 -->
     <button
+      v-if="false"
       class="mobile-menu-toggle md:hidden flex"
       @click="toggleMobileMenu"
       :aria-label="isMobileMenuOpen ? '关闭菜单' : '打开菜单'"
@@ -153,6 +155,7 @@ const menuGroups = ref([
     items: [
       { id: 'json-formatter', title: 'JSON格式化', icon: 'DocumentCopy', route: '/json-formatter' },
       { id: 'markdown-converter', title: 'HTML转Markdown', icon: 'Document', route: '/markdown-converter' },
+      { id: 'api-docs-to-markdown', title: 'hoppscotch转markdown', icon: 'Document', route: '/api-docs-to-markdown' },
       { id: 'java-to-json', title: 'Java转JSON', icon: 'DocumentCopy', route: '/java-to-json' },
       { id: 'sql-compressor', title: 'SQL压缩', icon: 'DataLine', route: '/sql-compressor' }
     ]
@@ -228,14 +231,14 @@ defineExpose({
 
 /* 桌面端导航 */
 .desktop-nav {
-  flex: 1;
-  justify-content: center;
+  flex: 0 1 auto;
+  justify-content: flex-start;
 }
 
 .nav-groups {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
+  gap: var(--space-md);
 }
 
 .nav-group {
@@ -256,7 +259,7 @@ defineExpose({
 .group-items {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 /* 导航项样式 */
@@ -264,7 +267,7 @@ defineExpose({
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-lg);
   color: var(--text-secondary);
   font-weight: var(--font-weight-medium);
